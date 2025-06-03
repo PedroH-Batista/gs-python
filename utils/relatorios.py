@@ -1,3 +1,4 @@
+# utils/relatorios.py
 import pandas as pd
 
 def gerar_estatisticas(nome_arquivo='historico.csv'):

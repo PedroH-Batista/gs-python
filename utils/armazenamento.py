@@ -1,3 +1,4 @@
+# utils/armazenamento.py
 import pandas as pd
 
 def salvar_historico(registros, avaliacoes, nome_arquivo='historico.csv'):
