@@ -5,7 +5,7 @@ from processamento.logica import avaliar_risco
 from interface.saida import exibir_relatorio
 from utils.armazenamento import salvar_historico
 from utils.relatorios import gerar_estatisticas
-from utils.graficos import gerar_grafico_modelo_polinomial
+from utils.graficos import gerar_graficos, gerar_grafico_modelo_polinomial
  
 def monitoramento_normal():
     # Modo de monitoramento normal
@@ -29,7 +29,7 @@ def monitoramento_normal():
  
     salvar_historico(registros, avaliacoes)
     gerar_estatisticas()
-    gerar_grafico_modelo_polinomial()
+    gerar_graficos()
  
 def simulacao_10_dias():
     # Modo de simulação do desafio: 10 dias de chuva
@@ -50,6 +50,18 @@ def simulacao_10_dias():
  
         niveis_rio_10_dias.append(nivel)
  
+    # ALERTA IMEDIATO no console:
+    print("\n=== VERIFICAÇÃO DE ALERTAS ===")
+    alerta = False
+    for dia, nivel in enumerate(niveis_rio_10_dias, start=1):
+        if nivel > 2:
+            print(f"⚠️  ALERTA: Possível enchente no dia {dia} (nível {nivel:.2f}m)")
+            alerta = True
+ 
+    if not alerta:
+        print("✅ Nenhum risco de enchente identificado nos 10 dias.")
+ 
+    # Gera o gráfico polinomial
     gerar_grafico_modelo_polinomial(cidade, niveis_rio_10_dias)
  
 def main():
