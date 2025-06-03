@@ -4,6 +4,7 @@ from dados.entrada import coletar_dados_usuario
 from processamento.logica import avaliar_risco
 from interface.saida import exibir_relatorio
 from utils.armazenamento import salvar_historico
+from utils.relatorios import gerar_estatisticas
 
 # Lista que vai armazenar os registros 
 registros = []
@@ -21,14 +22,8 @@ while contador < TOTAL_MEDICOES:
     registros.append(dados)  # Armazena na lista
     
     contador += 1
-
-# Processamento dos registros 
-print("\n=== RESUMO DAS MEDIÇÕES ===")
-for registro in registros:
-    risco = avaliar_risco(registro)
-    exibir_relatorio(registro, risco)
-
-# Processamento dos registros
+    
+#Processamento dos registros
 print("\n=== RESUMO DAS MEDIÇÕES ===")
 avaliacoes = []  # Nova lista para armazenar os riscos
 
@@ -39,3 +34,6 @@ for registro in registros:
 
 # Salva o histórico em CSV
 salvar_historico(registros, avaliacoes)
+
+# Gerar Estatísticas 
+gerar_estatisticas()
