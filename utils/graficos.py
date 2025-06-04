@@ -76,56 +76,67 @@ def gerar_graficos(nome_arquivo='historico.csv'):
 #Para a GS de Differentiated Problem Solving
 def gerar_grafico_modelo_polinomial(cidade, niveis_rio):
     """
-    Gera o gráfico solicitado no desafio: função polinomial que modela o nível do rio.
-    niveis_rio: lista com 10 valores (nível do rio em cada dia).
+    Gera o gráfico solicitado no desafio: função polinomial fixa que modela o nível do rio.
+    niveis_rio: lista com 10 valores (nível do rio em cada dia), cada um entre 0 e 3.
     """
     print("\n=== GERANDO GRÁFICO DO DESAFIO ===")
- 
+
     dias = np.arange(1, len(niveis_rio) + 1)  # Dias 1 a 10
     niveis = np.array(niveis_rio)
- 
-    # Ajuste polinomial (grau 3 recomendado para suavização)
-    grau = 3
-    coeficientes = np.polyfit(dias, niveis, grau)
-    p = np.poly1d(coeficientes)
- 
-    # Domínio: dias 1 a 10 (interpolado para suavizar curva)
-    dias_interpolado = np.linspace(1, 10, 100)
-    niveis_interpolado = p(dias_interpolado)
- 
-    # Ponto máximo
-    dia_maximo = dias_interpolado[np.argmax(niveis_interpolado)]
-    nivel_maximo = np.max(niveis_interpolado)
- 
-    # Dias de risco (> 2m)
-    dias_risco = dias[niveis > 2]
-    niveis_risco = niveis[niveis > 2]
- 
-    # Plot
+
+    # Definindo a função polinomial fixa
+    def f(x):
+        return -0.02 * x**3 + 0.35 * x**2 - 0.6 * x + 0.5
+
+    # Aplicando a função aos níveis informados
+    niveis_funcao = f(niveis)
+
+    # Normalizar para que o máximo seja 3
+    max_original = np.max(niveis_funcao)
+    niveis_funcao_norm = (niveis_funcao / max_original) * 3
+
+    # Ponto máximo da função normalizada
+    idx_max = np.argmax(niveis_funcao_norm)
+    nivel_maximo = niveis_funcao_norm[idx_max]
+    dia_maximo = dias[idx_max]
+
+    # Dias de risco: quando valor normalizado > 2
+    dias_risco = dias[niveis_funcao_norm > 2]
+    niveis_risco = niveis_funcao_norm[niveis_funcao_norm > 2]
+
     plt.figure(figsize=(10, 6))
-    plt.plot(dias_interpolado, niveis_interpolado, label=f'Função polinomial (grau {grau})', color='blue', linewidth=2)
-    plt.scatter(dias, niveis, color='black', label='Dados observados', s=80)
-    plt.scatter(dias_risco, niveis_risco, color='red', label='Dias de risco (>2m)', zorder=5, s=100)
-    plt.scatter(dia_maximo, nivel_maximo, color='green', label=f'Máximo ({nivel_maximo:.2f}m no dia {dia_maximo:.0f})', zorder=6, s=120)
- 
-    plt.title(f'Nível do rio em {cidade} - Modelo Polinomial (10 dias de chuva)')
-    plt.xlabel('Dia')
-    plt.ylabel('Nível do rio (m)')
-    plt.xticks(np.arange(1, 11))
-    plt.ylim(0, max(3.5, nivel_maximo + 0.5))  # margem de segurança
+
+    # Linha conectando os pontos em ordem de dias
+    plt.plot(dias, niveis_funcao_norm, label='Função polinomial fixa (normalizada)', color='blue', linewidth=2, marker='o')
+
+    # Pontos observados em preto (todos os pontos)
+    plt.scatter(dias, niveis_funcao_norm, color='black', s=80, label='Dados observados')
+
+    # Pontos de risco em vermelho (valores normalizados > 2)
+    plt.scatter(dias_risco, niveis_risco, color='red', s=100, label='Dias de risco (f(x) > 2)', zorder=5)
+
+    # Ponto máximo em verde
+    plt.scatter(dia_maximo, nivel_maximo, color='green', s=120, label=f'Máximo ({nivel_maximo:.2f}m no dia {dia_maximo})', zorder=6)
+
+    plt.title(f'Nível do rio em {cidade} - Modelo Polinomial Fixo')
+    plt.xlabel('Dias')
+    plt.ylabel('Nível do rio f(x) (m)')
+    plt.xlim(1, 10)
+    plt.ylim(0, 3)  # Limite fixo do nível do rio entre 0 e 3
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.legend()
     plt.tight_layout()
     plt.savefig(f'grafico_modelo_{cidade.lower().replace(" ", "_")}.png')
+    plt.close()
     print(f"✅ Gráfico 'grafico_modelo_{cidade.lower().replace(' ', '_')}.png' gerado.")
- 
+
     # Exibir domínio e imagem
     print("\n=== ANÁLISE MATEMÁTICA ===")
-    print(f"Domínio da função: dias 1 a 10")
-    print(f"Imagem da função: nível do rio de {np.min(niveis_interpolado):.2f}m a {np.max(niveis_interpolado):.2f}m")
-    print(f"Máximo: {nivel_maximo:.2f}m no dia {dia_maximo:.0f}")
+    print(f"Domínio da função: entradas informadas pelo usuário: {niveis.tolist()}")
+    print(f"Imagem da função normalizada: nível do rio de {np.min(niveis_funcao_norm):.2f}m a {np.max(niveis_funcao_norm):.2f}m")
+    print(f"Máximo: {nivel_maximo:.2f}m no dia {dia_maximo}")
     if len(dias_risco) > 0:
-        print(f"Dias de risco (>2m): {dias_risco.tolist()}")
+        print(f"Dias de risco (f(x) > 2): {dias_risco.tolist()}")
     else:
-        print("Nenhum dia com risco (>2m).")
+        print("Nenhum dia com risco (f(x) > 2).")
     print("=== FIM DA ANÁLISE ===\n")
