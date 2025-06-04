@@ -1,14 +1,19 @@
+# utils/graficos.py
+#GS de Differentiated Problem Solving
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 def gerar_grafico_polinomiais(cidade, niveis_rio):
     """
-    Gera um gráfico com polinômios.
+    Gera um gráfico com polinômios baseado na função matemática f(x) = -0.02x³ + 0.35x² - 0.6x + 0.5.
     """
     print("\n=== GERANDO GRÁFICO POLINOMIAL ===")
 
-    dias = np.arange(1, len(niveis_rio) + 1)
-    niveis = np.array(niveis_rio)
+    dias = np.arange(1, 11)  # Dias de 1 a 10
+
+    # Calcula os níveis com base na função polinomial
+    niveis = -0.02 * dias**3 + 0.35 * dias**2 - 0.6 * dias + 0.5
 
     # Ponto máximo
     dia_maximo = dias[np.argmax(niveis)]
@@ -20,7 +25,7 @@ def gerar_grafico_polinomiais(cidade, niveis_rio):
 
     # Plot direto
     plt.figure(figsize=(10, 6))
-    plt.plot(dias, niveis, marker='o', linestyle='-', color='blue', linewidth=2, label='Dados observados')
+    plt.plot(dias, niveis, marker='o', linestyle='-', color='blue', linewidth=2, label='Função f(x)')
     plt.scatter(dias_risco, niveis_risco, color='red', label='Dias de risco (>2m)', s=100, zorder=5)
     plt.scatter(dia_maximo, nivel_maximo, color='green', label=f'Máximo ({nivel_maximo:.2f}m no dia {dia_maximo})', s=120, zorder=6)
 
