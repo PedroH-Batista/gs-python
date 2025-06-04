@@ -1,11 +1,14 @@
+#João Felipe Bertini Monteiro de Siqueira RM: 563478
+#Luan Durbano Almeida RM: 564384
+#Pedro Henrique Silva Batista RM: 563220 
+
 # main.py
- 
 from dados.entrada import coletar_dados_usuario
 from processamento.logica import avaliar_risco
 from interface.saida import exibir_relatorio
 from utils.armazenamento import salvar_historico
 from utils.relatorios import gerar_estatisticas
-from utils.graficos import gerar_graficos, gerar_grafico_modelo_polinomial
+from utils.graficos import gerar_grafico_polinomiais
  
 def monitoramento_normal():
     # Modo de monitoramento normal
@@ -29,7 +32,7 @@ def monitoramento_normal():
  
     salvar_historico(registros, avaliacoes)
     gerar_estatisticas()
-    gerar_graficos()
+    gerar_grafico_polinomiais()
  
 def simulacao_10_dias():
     # Modo de simulação do desafio: 10 dias de chuva
@@ -62,7 +65,7 @@ def simulacao_10_dias():
         print("✅ Nenhum risco de enchente identificado nos 10 dias.")
  
     # Gera o gráfico polinomial
-    gerar_grafico_modelo_polinomial(cidade, niveis_rio_10_dias)
+    gerar_grafico_polinomiais(cidade, niveis_rio_10_dias)
  
 def main():
     while True:
