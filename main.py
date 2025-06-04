@@ -1,3 +1,7 @@
+#João Felipe Bertini RM563478
+#Luan Durbano Almeida RM563478
+#Pedro Batista RM563220
+
 # main.py
  
 from dados.entrada import coletar_dados_usuario
@@ -32,37 +36,32 @@ def monitoramento_normal():
     gerar_graficos()
  
 def simulacao_10_dias():
-    # Modo de simulação do desafio: 10 dias de chuva
-    print("\n=== SIMULAÇÃO DE 10 DIAS - DESAFIO DO NÍVEL DO RIO ===")
-    cidade = input("Informe o nome da cidade: ").strip().title()
-    niveis_rio_10_dias = []
- 
-    for dia in range(1, 11):
+    """
+    Função que solicita ao usuário os valores de 1 até 10,
+    e os envia para a função polinomial que gera o gráfico baseado na equação matemática.
+    """
+    print("\n=== MONITORAMENTO DO NÍVEL DO RIO ===")
+    print("Digite 10 valores de 1 até 10 (correspondentes a cada dia):")
+
+    dias_rio = []  # Lista para armazenar os dias inseridos pelo usuário
+    
+    for i in range(10):
         while True:
             try:
-                nivel = float(input(f"Dia {dia} - Nível do rio (em metros, 0 a 3): "))
-                if 0 <= nivel <= 3:
+                dia = int(input(f"Dia {i+1}: "))  # Solicita um número entre 1 e 10
+                if 1 <= dia <= 10 and dia not in dias_rio:  # Garante valores únicos dentro do intervalo
+                    dias_rio.append(dia)
                     break
                 else:
-                    raise ValueError
+                    print("⚠️ Insira um número entre 1 e 10, sem repetir!")
             except ValueError:
-                print("Valor inválido. Digite um número entre 0 e 3.")
- 
-        niveis_rio_10_dias.append(nivel)
- 
-    # ALERTA IMEDIATO no console:
-    print("\n=== VERIFICAÇÃO DE ALERTAS ===")
-    alerta = False
-    for dia, nivel in enumerate(niveis_rio_10_dias, start=1):
-        if nivel > 2:
-            print(f"⚠️  ALERTA: Possível enchente no dia {dia} (nível {nivel:.2f}m)")
-            alerta = True
- 
-    if not alerta:
-        print("✅ Nenhum risco de enchente identificado nos 10 dias.")
- 
-    # Gera o gráfico polinomial
-    gerar_grafico_modelo_polinomial(cidade, niveis_rio_10_dias)
+                print("❌ Entrada inválida! Digite um número inteiro.")
+
+    # Solicita o nome da cidade para inclusão no gráfico
+    cidade = input("\n🌍 Informe a cidade onde o monitoramento está sendo feito: ").strip()
+
+    # Chama a função para gerar o gráfico
+    gerar_grafico_modelo_polinomial(cidade, dias_rio)
  
 def main():
     while True:
