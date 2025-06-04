@@ -11,7 +11,7 @@ def monitoramento_normal():
     # Modo de monitoramento normal
     registros = []
     contador = 0
-    TOTAL_MEDICOES = 5  # Você pode ajustar
+    TOTAL_MEDICOES = 2  # Você pode ajustar
  
     while contador < TOTAL_MEDICOES:
         print(f"\n--- Medição {contador + 1} de {TOTAL_MEDICOES} ---")

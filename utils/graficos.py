@@ -6,21 +6,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.polynomial.polynomial import Polynomial
  
+# Função Baseada no CSV
 def gerar_graficos(nome_arquivo='historico.csv'):
-    """
-    Gera gráficos do histórico geral de medições (monitoramento normal).
-    """
+    # Tenta ler o arquivo CSV; se não encontrar, exibe uma mensagem e encerra a função
     try:
         df = pd.read_csv(nome_arquivo)
     except FileNotFoundError:
         print(f"\n⚠️ Arquivo '{nome_arquivo}' não encontrado. Nenhum gráfico gerado.")
         return
- 
+
+    # Verifica se todas as colunas necessárias estão presentes no DataFrame
+    colunas_necessarias = {'registro', 'risco', 'nivel_agua', 'intensidade_chuva'}
+    if not colunas_necessarias.issubset(df.columns):
+        print(f"\n⚠️ O arquivo '{nome_arquivo}' não possui as colunas necessárias: {colunas_necessarias}")
+        return
+
+    # Converte as colunas 'nivel_agua' e 'intensidade_chuva' para tipo numérico, tratando erros como NaN
+    df['nivel_agua'] = pd.to_numeric(df['nivel_agua'], errors='coerce')
+    df['intensidade_chuva'] = pd.to_numeric(df['intensidade_chuva'], errors='coerce')
+
     print("\n=== GERANDO GRÁFICOS DO HISTÓRICO ===")
- 
-    # 1️⃣ Gráfico de barras: quantidade de riscos por registro
+
+    # Gera gráfico de barras: quantidade de riscos por registro
     riscos_por_registro = df.groupby(['registro', 'risco']).size().unstack(fill_value=0)
- 
     riscos_por_registro.plot(kind='bar', figsize=(8, 6))
     plt.title('Quantidade de riscos por registro')
     plt.xlabel('Registro')
@@ -29,33 +37,40 @@ def gerar_graficos(nome_arquivo='historico.csv'):
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig('grafico_riscos_por_registro.png')
+    plt.close()
     print("✅ Gráfico 'grafico_riscos_por_registro.png' gerado.")
- 
-    # 2️⃣ Gráfico de linha: nível médio da água por registro
-    nivel_medio = df.groupby('registro')['nivel_agua'].mean()
- 
-    nivel_medio.plot(kind='line', marker='o', color='blue', figsize=(8, 6))
+
+    # Gera gráfico de linha: nível médio da água por registro
+    nivel_medio = df.groupby('registro')['nivel_agua'].mean().sort_index()
+    plt.figure(figsize=(8, 6))
+    plt.plot(nivel_medio.index, nivel_medio.values, marker='o', color='blue')
     plt.title('Nível médio da água por registro')
     plt.xlabel('Registro')
     plt.ylabel('Nível da água (m)')
+    plt.xticks(nivel_medio.index)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig('grafico_nivel_agua.png')
+    plt.close()
     print("✅ Gráfico 'grafico_nivel_agua.png' gerado.")
- 
-    # 3️⃣ Gráfico de linha: intensidade média da chuva por registro
-    chuva_medio = df.groupby('registro')['intensidade_chuva'].mean()
- 
-    chuva_medio.plot(kind='line', marker='o', color='orange', figsize=(8, 6))
+
+    # Gera gráfico de linha: intensidade média da chuva por registro
+    chuva_medio = df.groupby('registro')['intensidade_chuva'].mean().sort_index()
+    plt.figure(figsize=(8, 6))
+    plt.plot(chuva_medio.index, chuva_medio.values, marker='o', color='orange')
     plt.title('Intensidade média da chuva por registro')
     plt.xlabel('Registro')
     plt.ylabel('Intensidade da chuva (%)')
+    plt.xticks(chuva_medio.index)
+    plt.ylim(0, 100)  # Define o limite do eixo Y entre 0 e 100%
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig('grafico_intensidade_chuva.png')
+    plt.close()
     print("✅ Gráfico 'grafico_intensidade_chuva.png' gerado.")
- 
+
     print("\n=== FIM DOS GRÁFICOS DO HISTÓRICO ===\n")
+
  
 
 #Para a GS de Differentiated Problem Solving
